@@ -19,12 +19,13 @@ fastify.post('/webhook', async (request, reply) => {
     // console.log(request.ips)
     // console.log(request.hostname)
     try {
-        JSON.parse(request.body)
+        const str = JSON.stringify(request.body)
+        JSON.parse(str)
         const reqBody = request.body
         console.log(reqBody)
         return {secret: reqBody.secret}
     } catch (e) {
-        return {error: "Invalid body as JSON object.", body: request.raw}
+        return {Error: "Invalid body as JSON object.", Exception: e}
     }
 })
 
