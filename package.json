@@ -1,0 +1,20 @@
+{
+  "name": "webhook-to-s3",
+  "version": "0.5.0",
+  "description": "Node based http server to hook the git repo to s3 as zip package",
+  "main": "server.js",
+  "scripts": {
+    "test": "npm test",
+    "start": "node server"
+  },
+  "keywords": [
+    "webhook",
+    "git",
+    "s3"
+  ],
+  "author": "Leon Li <lilei.leon@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "fastify": "^2.12.0"
+  }
+}
