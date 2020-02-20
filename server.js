@@ -16,9 +16,7 @@ fastify.post('/webhook', async (request, reply) => {
         const str = JSON.stringify(request.body)
         JSON.parse(str)
         const req_body = request.body
-        // debug log
-        // console.log(req_body)
-        // console.log(req_body.release.zipball_url)
+        
         if(req_body.secret && req_body.secret == secret && 
             req_body.release && req_body.release.zipball_url) {
           // fetch the queries
@@ -45,30 +43,51 @@ fastify.post('/webhook', async (request, reply) => {
               }
               console.log({download: 'completed', url})
 
-              // bucket param is required
-              if(!bucket) return {bucket}
-              
-              // check if there is ak/sk then use them
-              const s3_options = {}
-              if(ak && sk) {
-                sk = Base64.decode(sk).replace('\n', '')
-                s3_options.accessKeyId = ak
-                s3_options.secretAccessKey = sk
-              }
-              const s3 = new aws.S3(s3_options)
-              const s3_key = `${req_body.repository.full_name}.zip`
-              // upload to s3
-              const params = {
-                Body: fs.readFileSync(filename), 
-                Bucket: bucket, 
-                Key: s3_key
-               };
-               s3.putObject(params, (err, data) => {
-                 if (err) console.log({err}) // an error occurred
-                 else     console.log({s3_key, upload: 'completed'})           // successful response
-               });
+              // after downloading, re-zip the source file to correct the root directory issue for code build
+              exec(`cd /tmp && unzip -qu ${filename} && cd /tmp/${repo} && zip -rq ${repo}.zip .`, (error) => {
+                if (error) {
+                  console.log(`error: ${error}`);
+                  return;
+                }
+                console.log({rezip: "completed"})
 
-               delete s3
+                const zip_file = `/tmp/${repo}/${repo}.zip`
+
+                // bucket param is required
+                if(!bucket) return {bucket}
+                
+                // check if there is ak/sk then use them
+                const s3_options = {}
+                if(ak && sk) {
+                  sk = Base64.decode(sk).replace('\n', '')
+                  s3_options.accessKeyId = ak
+                  s3_options.secretAccessKey = sk
+                }
+                const s3 = new aws.S3(s3_options)
+                const s3_key = `${req_body.repository.full_name}.zip`
+                // upload to s3
+                const params = {
+                  Body: fs.readFileSync(zip_file), 
+                  Bucket: bucket, 
+                  Key: s3_key
+                };
+                s3.putObject(params, (err, data) => {
+                  if (err) console.log({err}) // an error occurred
+                  else     console.log({s3_key, upload: 'completed'})           // successful response
+                });
+
+                delete s3
+
+                // clear up the /tmp files
+                exec(`rm -rf /tmp/${repo} && rm -rf ${filename}`, (error) => {
+                  if(error) console.log({error})
+                  else {
+                    console.log(filename + ' was deleted')
+                    console.log(`/tmp/${repo}/` + ' was deleted')
+                  }
+                })
+
+              })
           })
 
           return {im: "in"}
