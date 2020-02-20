@@ -1,6 +1,8 @@
 const fastify = require('fastify')({ logger: true })
 const { exec } = require("child_process");
-// const { S3 } = require('aws-sdk')
+const fs = require('fs')
+const aws = require('aws-sdk')
+const { Base64 } = require('js-base64')
 
 const secret = process.env.WEBHOOK_SECRET
 const api_token = process.env.API_TOKEN
@@ -21,9 +23,9 @@ fastify.post('/webhook', async (request, reply) => {
             req_body.release && req_body.release.zipball_url) {
           // fetch the queries
           const ak = request.query.ak
-          const sk = request.query.sk
-          console.log({ak, sk})    
-          
+          let sk = request.query.base64_sk
+          const bucket = request.query.bucket
+
           const repo_id = req_body.repository.id
           const repo = req_body.repository.name
           const tag_name = req_body.release.tag_name
@@ -42,8 +44,31 @@ fastify.post('/webhook', async (request, reply) => {
                   return;
               }
               console.log({download: 'completed', url})
-              
 
+              // bucket param is required
+              if(!bucket) return {bucket}
+              
+              // check if there is ak/sk then use them
+              const s3_options = {}
+              if(ak && sk) {
+                sk = Base64.decode(sk).replace('\n', '')
+                s3_options.accessKeyId = ak
+                s3_options.secretAccessKey = sk
+              }
+              const s3 = new aws.S3(s3_options)
+              const s3_key = `${req_body.repository.full_name}.zip`
+              // upload to s3
+              const params = {
+                Body: fs.readFileSync(filename), 
+                Bucket: bucket, 
+                Key: s3_key
+               };
+               s3.putObject(params, (err, data) => {
+                 if (err) console.log({err}) // an error occurred
+                 else     console.log({s3_key, upload: 'completed'})           // successful response
+               });
+
+               delete s3
           })
 
           return {im: "in"}
