@@ -15,6 +15,7 @@
   "author": "Leon Li <lilei.leon@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "aws-sdk": "^2.621.0",
     "fastify": "^2.12.0"
   }
 }
