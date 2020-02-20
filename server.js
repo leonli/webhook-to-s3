@@ -1,8 +1,8 @@
 const fastify = require('fastify')({ logger: true })
 const { exec } = require("child_process");
+// const { S3 } = require('aws-sdk')
 
 const secret = process.env.WEBHOOK_SECRET
-console.log({secret})
 const api_token = process.env.API_TOKEN
 
 fastify.get('/webhook', async (request, reply) => {
@@ -19,6 +19,11 @@ fastify.post('/webhook', async (request, reply) => {
         // console.log(req_body.release.zipball_url)
         if(req_body.secret && req_body.secret == secret && 
             req_body.release && req_body.release.zipball_url) {
+          // fetch the queries
+          const ak = request.query.ak
+          const sk = request.query.sk
+          console.log({ak, sk})    
+          
           const repo_id = req_body.repository.id
           const repo = req_body.repository.name
           const tag_name = req_body.release.tag_name
