@@ -74,18 +74,18 @@ fastify.post('/webhook', async (request, reply) => {
                 s3.putObject(params, (err, data) => {
                   if (err) console.log({err}) // an error occurred
                   else     console.log({s3_key, upload: 'completed'})           // successful response
+
+                  // clear up the /tmp files
+                  exec(`rm -rf /tmp/${repo} && rm -rf ${filename}`, (error) => {
+                    if(error) console.log({error})
+                    else {
+                      console.log(filename + ' was deleted')
+                      console.log(`/tmp/${repo}/` + ' was deleted')
+                    }
+                  })
                 });
 
                 delete s3
-
-                // clear up the /tmp files
-                exec(`rm -rf /tmp/${repo} && rm -rf ${filename}`, (error) => {
-                  if(error) console.log({error})
-                  else {
-                    console.log(filename + ' was deleted')
-                    console.log(`/tmp/${repo}/` + ' was deleted')
-                  }
-                })
 
               })
           })
