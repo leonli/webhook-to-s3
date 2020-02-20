@@ -2,6 +2,7 @@ const fastify = require('fastify')({ logger: true })
 const { exec } = require("child_process");
 
 const secret = process.env.WEBHOOK_SECRET
+console.log({secret})
 const api_token = process.env.API_TOKEN
 
 fastify.get('/webhook', async (request, reply) => {
