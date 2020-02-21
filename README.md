@@ -58,6 +58,9 @@ By default the webhook to s3 server shall use your assigned role for the archive
 
 ![gitea with ak/sk](img/gitea2.png)
 
+## Conclution
+Please be noted this repo is designed to be triggered by `release` action only.
+
 # License
 webhook-to-s3 is open-source software distributed under the terms of the [Apache 2.0](LICENSE) license.
 
