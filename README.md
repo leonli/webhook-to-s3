@@ -40,6 +40,11 @@ tail the pm2 logs
 ```
 pm2 logs
 ```
+Or you can just simplely run in docker.
+```
+docker run -d -p 3000:3000 -e WEBHOOK_SECRET=xxxx -e API_TOKEN=xxxx awsrun/webhook-to-s3:0.8.0
+```
+
 ## Configurations 
 The git webhook shall send a secret to the server, so before `yarn start`, we need to inject the secrect by using environment variable `WEBHOOK_SECRET` and a generated Gitea API token has to be injected to the process to allow the webhook server to `curl` released archive file, the environment variable is `API_TOKEN`.
 ``` bash
