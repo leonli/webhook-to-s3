@@ -1,6 +1,6 @@
 {
   "name": "webhook-to-s3",
-  "version": "0.9.0",
+  "version": "0.8.0",
   "description": "Node based http server to hook the git repo to s3 as zip package",
   "main": "server.js",
   "scripts": {
