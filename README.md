@@ -60,6 +60,20 @@ By default the webhook to s3 server shall use your assigned role for the archive
 
 ## Conclution
 Please be noted this repo is designed to be triggered by `release` action only.
+Given an example IAM Role/AKSK policy here.
+```
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "example",
+            "Effect": "Allow",
+            "Action": "s3:PutObject",
+            "Resource": "[YOUR BUCKET/KEYS]"
+        }
+    ]
+}
+```
 
 # License
 webhook-to-s3 is open-source software distributed under the terms of the [Apache 2.0](LICENSE) license.
