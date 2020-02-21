@@ -54,7 +54,7 @@ The Gitea Webhook config is simple, just fill in the form and remember to match 
 
 ![gitea basic](img/gitea1.png)
 
-By default the webhook to s3 server shall use your assigned role for the archive upload to the bucket, however you can optinally assign a `ACCESSKEY` and `SECRETKEY` to the post form so that the webhook to s3 server shall help you do even across account uploading for your AWS CodePipeline/CodeBuild integration.
+By default the webhook to s3 server shall use your assigned role for the archive upload to the bucket, however you can optionally assign a `ACCESSKEY` and `SECRETKEY` to the post form so that the webhook to s3 server shall help you do even across account uploading for your AWS CodePipeline/CodeBuild integration.
 
 ![gitea with ak/sk](img/gitea2.png)
 
